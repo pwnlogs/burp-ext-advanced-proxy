@@ -26,6 +26,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
     private JTextField hostnameField;
     private JTextField pathField;
     private JTextField methodField;
+    private JButton pasteUrlButton;
     private Pattern hostPattern;
     private Pattern pathPattern;
     private Pattern methodPattern;
@@ -143,6 +144,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
         this.hostnameField.setEditable(false);
         this.pathField.setEditable(false);
         this.methodField.setEditable(false);
+        this.pasteUrlButton.setEnabled(false);
         this.enableDropLabel.setVisible(true);
         this.dropEnabled = true;
     }
@@ -151,6 +153,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
         this.hostnameField.setEditable(true);
         this.pathField.setEditable(true);
         this.methodField.setEditable(true);
+        this.pasteUrlButton.setEnabled(true);
         this.enableDropLabel.setVisible(false);
         this.dropEnabled = false;
     }
@@ -192,7 +195,6 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                 disableDrop();
             }
         });
-        this.disableDrop();
 
         JPanel pane = new JPanel();
         pane.setLayout(new GridBagLayout());
@@ -216,25 +218,22 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
 
         c.gridwidth = 1;
         c.gridy = c.gridy + 1;
-        JButton pasteUrl = new JButton("Parse and paste URL");
-        pasteUrl.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    String urlStr = (String) Toolkit.getDefaultToolkit()
-                            .getSystemClipboard().getData(DataFlavor.stringFlavor);
-                    URL url = new URL(urlStr);
-                    hostnameField.setText(url.getHost());
-                    pathField.setText(url.getPath());
-                } catch (UnsupportedFlavorException | IOException e) {
-                    JOptionPane.showMessageDialog(null,
-                            "Failed to read/parse clipboard content.",
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                    stderr.println(Arrays.toString(e.getStackTrace()));
-                }
+        this.pasteUrlButton = new JButton("Parse and paste URL");
+        this.pasteUrlButton.addActionListener(actionEvent -> {
+            try {
+                String urlStr = (String) Toolkit.getDefaultToolkit()
+                        .getSystemClipboard().getData(DataFlavor.stringFlavor);
+                URL url = new URL(urlStr);
+                hostnameField.setText(url.getHost());
+                pathField.setText(url.getPath());
+            } catch (UnsupportedFlavorException | IOException e) {
+                JOptionPane.showMessageDialog(null,
+                        "Failed to read/parse clipboard content.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                stderr.println(Arrays.toString(e.getStackTrace()));
             }
         });
-        pane.add(pasteUrl, c);
+        pane.add(this.pasteUrlButton, c);
 
         c.gridwidth = 1;
         c.gridy = c.gridy + 1;
@@ -258,6 +257,8 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
         panel.add(pane);
         this.tabUi.setLayout(new BorderLayout());
         this.tabUi.add(panel, BorderLayout.PAGE_START);
+
+        this.disableDrop();
         System.gc();
     }
 }
