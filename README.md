@@ -1,2 +1,4 @@
 # burp-ext-auto-drop
-Burp Suite Extension that drops requests by regex matching hostname, path, and method.
+A Burp Suite Extension that drops requests from proxy by regex matching hostname, path, and method.
+
+![screenshot](res/screenshot.png)
