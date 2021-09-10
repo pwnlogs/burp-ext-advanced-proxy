@@ -82,12 +82,10 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
         for(IProxyComponent pc: this.IProxyComponents) {
             JPanel p = pc.getPanel();
             if (p != null) {
-//                JLabel title = new JLabel(pc.getName());
-//                Font font = title.getFont();
-//                title.setFont(font.deriveFont(font.getStyle() | Font.BOLD));
-//                panel.add(title);
                 panel.add(p);
+                panel.add(Box.createVerticalStrut(7));
                 panel.add(new JSeparator());
+                panel.add(Box.createVerticalStrut(7));
             }
         }
         this.tabUi.setLayout(new BorderLayout());

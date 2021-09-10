@@ -24,7 +24,7 @@ abstract class ProxyComponent implements IProxyComponent{
         c.anchor = GridBagConstraints.LINE_START;
         c.insets = new Insets(7, 10, 7, 10);  // margin
         c.ipady = 5; // padding
-        c.weightx = 1;
+        c.weightx = 0;
         c.gridy = 0;
         c.gridx = 0;
         return c;

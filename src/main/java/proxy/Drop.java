@@ -119,7 +119,7 @@ public class Drop extends ProxyComponent {
      */
     @Override
     public JPanel getPanel() {
-        this.enableCheckBox = new JCheckBox("Drop requests with matching host");
+        this.enableCheckBox = new JCheckBox("Drop requests");
         this.enableLabel = new JLabel("<html>Drop enabled and configs blocked. Disable to configure again " +
                 "<span style=\"color:green\">⬤</span></html>", SwingConstants.RIGHT);
         this.hostnameField = new JTextField("", 72);
@@ -133,24 +133,26 @@ public class Drop extends ProxyComponent {
         pane.setLayout(new GridBagLayout());
         GridBagConstraints c = this.getDefaultGBC();
 
-        JLabel titlePane = new JLabel(this.getName());
+        // Title   ... Drop Requests ...
+        JLabel titlePane = new JLabel(this.getName(), SwingConstants.CENTER);
         Font font = titlePane.getFont();
         titlePane.setFont(font.deriveFont(font.getStyle() | Font.BOLD));
         c.anchor = GridBagConstraints.CENTER;
-        c.gridwidth = 3;
+        c.weightx = 1;
+        c.gridwidth = 2;
         pane.add(titlePane, c);
 
+        // [ ] Drop request with ...     ... Drop enabled
         JPanel checkBoxPane1 = new JPanel();
         checkBoxPane1.setLayout(new BoxLayout(checkBoxPane1, BoxLayout.X_AXIS));
         checkBoxPane1.add(this.enableCheckBox);
         checkBoxPane1.add(Box.createHorizontalGlue());
         checkBoxPane1.add(this.enableLabel);
-
         c.anchor = GridBagConstraints.LINE_START;
-        c.gridwidth = 3;
         c.gridy = c.gridy + 1;
         pane.add(checkBoxPane1, c);
 
+        //  button panel ... [Parse and paste URL]
         this.pasteUrlButton = new JButton("Parse and paste URL");
         this.pasteUrlButton.addActionListener(actionEvent -> {
             try {
@@ -165,28 +167,37 @@ public class Drop extends ProxyComponent {
         JPanel buttonPane = new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.X_AXIS));
         buttonPane.add(this.pasteUrlButton);
-        c.gridwidth = 3;
         c.gridy = c.gridy + 1;
         pane.add(buttonPane, c);
 
+        // Hostname (regex) [______]
         c.gridwidth = 1;
         c.gridy = c.gridy + 1;
+        c.weightx = 0;
         pane.add(new JLabel("Hostname (regex)"), c);
         c.gridx = 1;
+        c.weightx = 1;
         pane.add(this.hostnameField, c);
 
+        // Path (regex) [______]
         c.gridx = 0;
         c.gridy = c.gridy + 1;
+        c.weightx = 0;
         pane.add(new JLabel("Path (regex)"), c);
         c.gridx = 1;
+        c.weightx = 1;
         pane.add(this.pathField, c);
 
+        // Method (regex) [______]
         c.gridx = 0;
         c.gridy = c.gridy + 1;
+        c.weightx = 0;
         pane.add(new JLabel("Method (regex)"), c);
         c.gridx = 1;
+        c.weightx = 1;
         pane.add(this.methodField, c);
 
+        this.setEnabled(false);
         return pane;
     }
 }
