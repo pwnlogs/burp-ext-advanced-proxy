@@ -1,8 +1,9 @@
 package proxy;
 
-import Utils.MessageUtils;
 import Utils.UIHelper;
-import burp.*;
+import burp.BurpException;
+import burp.BurpExtender;
+import burp.IHttpService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,10 +48,10 @@ public class ChangeHost extends ProxyComponent{
             // Method
             String method = this.methodField.getText().trim();
             if ("".equals(method)) {
-                this.methodField.setText(".*");
+                this.methodField.setText(method = ".*");
             }
             try {
-                this.methodPattern = Pattern.compile("".equals(method) ? method : ".*");
+                this.methodPattern = Pattern.compile(method);
             } catch (PatternSyntaxException e) {
                 JOptionPane.showMessageDialog(null,
                         "Method is not valid regex.",
@@ -78,11 +79,11 @@ public class ChangeHost extends ProxyComponent{
             }
             // Port
             String port = this.portField.getText().trim();
-            if ("".equals(method)) {
-                this.portField.setText(".*");
+            if ("".equals(port)) {
+                this.portField.setText(port = ".*");
             }
             try {
-                this.portPattern = Pattern.compile("".equals(method) ? method : ".*");
+                this.portPattern = Pattern.compile(port);
             } catch (PatternSyntaxException e) {
                 JOptionPane.showMessageDialog(null,
                         "Port is not valid regex.",
@@ -91,16 +92,16 @@ public class ChangeHost extends ProxyComponent{
                 return;
             }
             // check path
-            String url = this.pathField.getText().trim();
-            if ("".equals(url)) {
-                this.pathField.setText(".*");
+            String path = this.pathField.getText().trim();
+            if ("".equals(path)) {
+                this.pathField.setText(path = ".*");
             }
             try {
-                this.pathPattern = Pattern.compile(url);
+                this.pathPattern = Pattern.compile(path);
             } catch (PatternSyntaxException e) {
                 JOptionPane.showMessageDialog(null,
-                        "URL is not valid regex.",
-                        "Invalid URL", JOptionPane.ERROR_MESSAGE);
+                        "Path is not valid regex.",
+                        "Invalid Path", JOptionPane.ERROR_MESSAGE);
                 this.enableCheckBox.setSelected(false);
                 return;
             }
@@ -195,9 +196,9 @@ public class ChangeHost extends ProxyComponent{
         this.portField = new JTextField(".*", 8);
         this.pathField = new JTextField(".*");
         this.destinationProtocolDropDown = UIHelper.getProtocolDropDown();
-        this.destinationProtocolDropDown.setSelectedIndex(1);
-        this.destinationHostField = new JTextField("");
-        this.destinationPortField = new JTextField("");
+        this.destinationProtocolDropDown.setSelectedIndex(0);
+        this.destinationHostField = new JTextField("127.0.0.1");
+        this.destinationPortField = new JTextField("80");
         UIHelper.setMonospaceFont(methodField, hostnameField, portField, pathField, destinationHostField, destinationPortField);
         this.enableCheckBox.addItemListener(e -> {
             setEnabled(e.getStateChange() == ItemEvent.SELECTED);

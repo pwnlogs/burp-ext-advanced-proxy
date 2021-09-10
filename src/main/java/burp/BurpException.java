@@ -6,10 +6,6 @@ public class BurpException extends Exception {
         return showMessage;
     }
 
-    public void setShowMessage(String showMessage) {
-        this.showMessage = showMessage;
-    }
-
     String showMessage;
 
     public BurpException(String msg, Throwable err) {

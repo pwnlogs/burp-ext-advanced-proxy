@@ -30,6 +30,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
     private void initComponents() {
         this.proxyComponents.add(new Drop(this));
         this.proxyComponents.add(new ChangeHost(this));
+        // Add new components here
     }
 
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -42,7 +43,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
         callbacks.addSuiteTab(this);
         this.helpers = callbacks.getHelpers();
         callbacks.registerProxyListener(this);
-        this.stdout.println("Loaded" + this.name + "Extension");
+        this.stdout.println("Loaded " + this.name + " Extension");
     }
 
     @Override

@@ -1,6 +1,5 @@
 package proxy;
 
-import Utils.MessageUtils;
 import Utils.UIHelper;
 import burp.BurpException;
 import burp.BurpExtender;
@@ -42,10 +41,10 @@ public class Drop extends ProxyComponent {
             // Method
             String method = this.methodField.getText().trim();
             if ("".equals(method)) {
-                this.methodField.setText(".*");
+                this.methodField.setText(method = ".*");
             }
             try {
-                this.methodPattern = Pattern.compile("".equals(method) ? method : ".*");
+                this.methodPattern = Pattern.compile(method);
             } catch (PatternSyntaxException e) {
                 JOptionPane.showMessageDialog(null,
                         "Method is not valid regex.",
@@ -72,11 +71,11 @@ public class Drop extends ProxyComponent {
             }
             // Port
             String port = this.portField.getText().trim();
-            if ("".equals(method)) {
-                this.portField.setText(".*");
+            if ("".equals(port)) {
+                this.portField.setText(port = ".*");
             }
             try {
-                this.portPattern = Pattern.compile("".equals(method) ? method : ".*");
+                this.portPattern = Pattern.compile(port);
             } catch (PatternSyntaxException e) {
                 JOptionPane.showMessageDialog(null,
                         "Port is not valid regex.",
@@ -84,12 +83,12 @@ public class Drop extends ProxyComponent {
                 return;
             }
             // check path
-            String url = this.pathField.getText().trim();
-            if ("".equals(url)) {
-                this.pathField.setText(".*");
+            String path = this.pathField.getText().trim();
+            if ("".equals(path)) {
+                this.pathField.setText(path = ".*");
             }
             try {
-                this.pathPattern = Pattern.compile(url);
+                this.pathPattern = Pattern.compile(path);
             } catch (PatternSyntaxException e) {
                 JOptionPane.showMessageDialog(null,
                         "URL is not valid regex.",

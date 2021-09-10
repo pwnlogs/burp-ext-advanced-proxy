@@ -9,6 +9,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 public class UIHelper {
 
@@ -22,18 +23,24 @@ public class UIHelper {
             String urlStr = (String) Toolkit.getDefaultToolkit()
                     .getSystemClipboard().getData(DataFlavor.stringFlavor);
             URL url = new URL(urlStr);
-            hostnameField.setText(url.getHost());
-            int protocolIndex = "HTTP".equals(url.getProtocol()) ? UIHelper.HTTP_INDEX : UIHelper.HTTPS_INDEX;
+            // Hostname
+            hostnameField.setText(Pattern.quote(url.getHost()));
+            // Port
             int port = url.getPort();
             if (port == -1) {
-                port = protocolIndex;
+                port = "HTTP".equals(url.getProtocol()) ? 80 : 443;
             }
-            portField.setText(String.valueOf(port));
+            portField.setText(Pattern.quote(String.valueOf(port)));
+            // Path
             if (pathField != null) {
-                pathField.setText(url.getPath());
+                String path = url.getPath();
+                pathField.setText(Pattern.quote(
+                        path.endsWith("/") ? path.substring(0, path.length()-1) : path
+                ) + "/?");
             }
+            // Protocol
             if (protocolDropDown != null) {
-                protocolDropDown.setSelectedIndex(protocolIndex);
+                protocolDropDown.setSelectedIndex("HTTP".equals(url.getProtocol()) ? UIHelper.HTTP_INDEX : UIHelper.HTTPS_INDEX);
             }
         } catch (UnsupportedFlavorException | IOException e) {
             throw new BurpException("Failed to read/parse clipboard content. Clipboard data might be invalid.", e);

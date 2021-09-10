@@ -1,3 +1,6 @@
+/**
+ * Note: These are not Unit tests. But quick functions written for debugging.
+ */
 package proxy;
 
 import burp.IHttpRequestResponse;

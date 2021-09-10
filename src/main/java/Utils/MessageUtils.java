@@ -1,15 +1,6 @@
 package Utils;
 
-import burp.BurpException;
-
-import javax.swing.*;
-import javax.swing.text.JTextComponent;
-import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.URL;
 
 public class MessageUtils {
 
@@ -28,9 +19,8 @@ public class MessageUtils {
         ByteArrayOutputStream ba = new ByteArrayOutputStream();
         i++; // start at (method + ' ')
         for ( ; i < request.length-1; i++) {
-            // if ' ' or '?' or '/ ' or '/?' is encountered, break
-            if (request[i] == (byte)' ' || request[i] == (byte)'?' ||
-                    (request[i] == (byte)'/' && (request[i+1] == (byte)' ' || request[i+1] == (byte)'?'))) {
+            // if ' ' or '?' is encountered, break
+            if (request[i] == (byte)' ' || request[i] == (byte)'?') {
                 break;
             }
             ba.write(request[i]);
