@@ -60,7 +60,7 @@ public class Utils {
             hostnameField.setText(url.getHost());
             pathField.setText(url.getPath());
         } catch (UnsupportedFlavorException | IOException e) {
-            throw new BurpException("Failed to read/parse clipboard content", e);
+            throw new BurpException("Failed to read/parse clipboard content. Clipboard data might be invalid.", e);
         }
     }
 }

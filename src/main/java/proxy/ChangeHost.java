@@ -28,7 +28,7 @@ public class ChangeHost extends ProxyComponent{
     }
 
     public String getName() {
-        return "Change destination host";
+        return "Host Change";
     }
 
     @Override
@@ -59,8 +59,8 @@ public class ChangeHost extends ProxyComponent{
      */
     @Override
     public JPanel getPanel() {
-        this.enableCheckBox = new JCheckBox("Drop requests with matching host");
-        this.enableLabel = new JLabel("<html>Drop enabled and configs blocked. Disable to configure again " +
+        this.enableCheckBox = new JCheckBox("Change destination host");
+        this.enableLabel = new JLabel("<html>Host change enabled and configs blocked. Disable to configure again " +
                 "<span style=\"color:green\">⬤</span></html>", SwingConstants.RIGHT);
         this.hostnameField = new JTextField("", 72);
         this.pathField = new JTextField(".*", 72);
@@ -71,26 +71,28 @@ public class ChangeHost extends ProxyComponent{
 
         JPanel pane = new JPanel();
         pane.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.LINE_START;
-        c.insets = new Insets(10, 10, 10, 10);  // margin
-        c.ipady = 5; // padding
+        GridBagConstraints c = this.getDefaultGBC();
+
+        // Title   ... Drop Requests ...
+        JLabel titlePane = new JLabel(this.getName(), SwingConstants.CENTER);
+        Font font = titlePane.getFont();
+        titlePane.setFont(font.deriveFont(font.getStyle() | Font.BOLD));
+        c.anchor = GridBagConstraints.CENTER;
         c.weightx = 1;
-
-        JPanel pane1 = new JPanel();
-        pane1.setLayout(new BoxLayout(pane1, BoxLayout.X_AXIS));
-        pane1.add(this.enableCheckBox);
-        pane1.add(Box.createHorizontalGlue());
-        pane1.add(this.enableLabel);
-
         c.gridwidth = 2;
-        c.gridy = 0;
-        c.gridx = 0;
-        pane.add(pane1, c);
+        pane.add(titlePane, c);
 
-        c.gridwidth = 1;
+        // [ ] Drop request with ...     ... Drop enabled
+        JPanel checkBoxPane1 = new JPanel();
+        checkBoxPane1.setLayout(new BoxLayout(checkBoxPane1, BoxLayout.X_AXIS));
+        checkBoxPane1.add(this.enableCheckBox);
+        checkBoxPane1.add(Box.createHorizontalGlue());
+        checkBoxPane1.add(this.enableLabel);
+        c.anchor = GridBagConstraints.LINE_START;
         c.gridy = c.gridy + 1;
+        pane.add(checkBoxPane1, c);
+
+        //  button panel ... [Parse and paste URL]
         this.pasteUrlButton = new JButton("Parse and paste URL");
         this.pasteUrlButton.addActionListener(actionEvent -> {
             try {
@@ -102,26 +104,40 @@ public class ChangeHost extends ProxyComponent{
                 this.ext.stderr.println(Arrays.toString(e.getStackTrace()));
             }
         });
-        pane.add(this.pasteUrlButton, c);
+        JPanel buttonPane = new JPanel();
+        buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.X_AXIS));
+        buttonPane.add(this.pasteUrlButton);
+        c.gridy = c.gridy + 1;
+        pane.add(buttonPane, c);
 
+        // Hostname (regex) [______]
         c.gridwidth = 1;
         c.gridy = c.gridy + 1;
+        c.weightx = 0;
         pane.add(new JLabel("Hostname (regex)"), c);
         c.gridx = 1;
+        c.weightx = 1;
         pane.add(this.hostnameField, c);
 
+        // Path (regex) [______]
         c.gridx = 0;
         c.gridy = c.gridy + 1;
+        c.weightx = 0;
         pane.add(new JLabel("Path (regex)"), c);
         c.gridx = 1;
+        c.weightx = 1;
         pane.add(this.pathField, c);
 
+        // Method (regex) [______]
         c.gridx = 0;
         c.gridy = c.gridy + 1;
+        c.weightx = 0;
         pane.add(new JLabel("Method (regex)"), c);
         c.gridx = 1;
+        c.weightx = 1;
         pane.add(this.methodField, c);
 
+        this.setEnabled(false);
         return pane;
     }
 

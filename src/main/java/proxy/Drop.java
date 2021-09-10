@@ -14,13 +14,15 @@ import java.util.regex.PatternSyntaxException;
 
 public class Drop extends ProxyComponent {
 
-    private Pattern hostPattern;
-    private Pattern pathPattern;
     private Pattern methodPattern;
+    private Pattern hostPattern;
+    private Pattern portPattern;
+    private Pattern pathPattern;
 
     private JCheckBox enableCheckBox;
     private JLabel enableLabel;
     private JTextField hostnameField;
+    private JTextField portField;
     private JTextField pathField;
     private JTextField methodField;
     private JButton pasteUrlButton;
@@ -36,6 +38,19 @@ public class Drop extends ProxyComponent {
     @Override
     public void setEnabled(boolean enable) {
         if (enable) {
+            // Method
+            String method = this.methodField.getText().trim();
+            if ("".equals(method)) {
+                this.methodField.setText(".*");
+            }
+            try {
+                this.methodPattern = Pattern.compile("".equals(method) ? method : ".*");
+            } catch (PatternSyntaxException e) {
+                JOptionPane.showMessageDialog(null,
+                        "Method is not valid regex.",
+                        "Invalid Method", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             // Check hostname
             String hostname = this.hostnameField.getText().trim();
             if ("".equals(hostname)) {
@@ -54,6 +69,19 @@ public class Drop extends ProxyComponent {
                 this.enableCheckBox.setSelected(false);
                 return;
             }
+            // Port
+            String port = this.portField.getText().trim();
+            if ("".equals(method)) {
+                this.portField.setText(".*");
+            }
+            try {
+                this.portPattern = Pattern.compile("".equals(method) ? method : ".*");
+            } catch (PatternSyntaxException e) {
+                JOptionPane.showMessageDialog(null,
+                        "Port is not valid regex.",
+                        "Invalid Port", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             // check path
             String url = this.pathField.getText().trim();
             if ("".equals(url)) {
@@ -67,23 +95,11 @@ public class Drop extends ProxyComponent {
                         "Invalid URL", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            // Method
-            String method = this.methodField.getText().trim();
-            if ("".equals(method)) {
-                this.methodField.setText(".*");
-            }
-            try {
-                this.methodPattern = Pattern.compile("".equals(method) ? method : ".*");
-            } catch (PatternSyntaxException e) {
-                JOptionPane.showMessageDialog(null,
-                        "Method is not valid regex.",
-                        "Invalid Method", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
         }
-        this.hostnameField.setEditable(!enable);
-        this.pathField.setEditable(!enable);
         this.methodField.setEditable(!enable);
+        this.hostnameField.setEditable(!enable);
+        this.portField.setEditable(!enable);
+        this.pathField.setEditable(!enable);
         this.pasteUrlButton.setEnabled(!enable);
         this.enableLabel.setVisible(enable);
         this.enabled = enable;
@@ -122,9 +138,15 @@ public class Drop extends ProxyComponent {
         this.enableCheckBox = new JCheckBox("Drop requests");
         this.enableLabel = new JLabel("<html>Drop enabled and configs blocked. Disable to configure again " +
                 "<span style=\"color:green\">⬤</span></html>", SwingConstants.RIGHT);
-        this.hostnameField = new JTextField("", 72);
-        this.pathField = new JTextField(".*", 72);
-        this.methodField = new JTextField(".*", 72);
+        this.methodField = new JTextField(".*", 8);
+        Font monospaceFont = new Font("monospaced", Font.PLAIN, this.methodField.getFont().getSize());
+        this.methodField.setFont(monospaceFont);
+        this.hostnameField = new JTextField("", 36);
+        this.hostnameField.setFont(monospaceFont);
+        this.portField = new JTextField(".*", 8);
+        this.portField.setFont(monospaceFont);
+        this.pathField = new JTextField(".*");
+        this.pathField.setFont(monospaceFont);
         this.enableCheckBox.addItemListener(e -> {
             setEnabled(e.getStateChange() == ItemEvent.SELECTED);
         });
@@ -139,7 +161,7 @@ public class Drop extends ProxyComponent {
         titlePane.setFont(font.deriveFont(font.getStyle() | Font.BOLD));
         c.anchor = GridBagConstraints.CENTER;
         c.weightx = 1;
-        c.gridwidth = 2;
+        c.gridwidth = 6;
         pane.add(titlePane, c);
 
         // [ ] Drop request with ...     ... Drop enabled
@@ -170,32 +192,39 @@ public class Drop extends ProxyComponent {
         c.gridy = c.gridy + 1;
         pane.add(buttonPane, c);
 
-        // Hostname (regex) [______]
+        // Method (.*) [___] Hostname (.*) [________]  Port (.*) [___]
         c.gridwidth = 1;
         c.gridy = c.gridy + 1;
+        // method
         c.weightx = 0;
-        pane.add(new JLabel("Hostname (regex)"), c);
-        c.gridx = 1;
+        pane.add(new JLabel("Method (.*)"), c);
+        c.gridx = c.gridx + 1;
+        c.weightx = 0.2;
+        pane.add(this.methodField, c);
+        // hostname
+        c.gridx = c.gridx + 1;
+        c.weightx = 0;
+        pane.add(new JLabel("Hostname (.*)"), c);
+        c.gridx = c.gridx + 1;
         c.weightx = 1;
         pane.add(this.hostnameField, c);
+        // port
+        c.gridx = c.gridx + 1;
+        c.weightx = 0;
+        pane.add(new JLabel("Port (.*)"), c);
+        c.gridx = c.gridx + 1;
+        c.weightx = 0.2;
+        pane.add(this.portField, c);
 
         // Path (regex) [______]
         c.gridx = 0;
         c.gridy = c.gridy + 1;
         c.weightx = 0;
-        pane.add(new JLabel("Path (regex)"), c);
-        c.gridx = 1;
+        pane.add(new JLabel("Path (.*)"), c);
+        c.gridx = c.gridx + 1;
+        c.gridwidth = 5;
         c.weightx = 1;
         pane.add(this.pathField, c);
-
-        // Method (regex) [______]
-        c.gridx = 0;
-        c.gridy = c.gridy + 1;
-        c.weightx = 0;
-        pane.add(new JLabel("Method (regex)"), c);
-        c.gridx = 1;
-        c.weightx = 1;
-        pane.add(this.methodField, c);
 
         this.setEnabled(false);
         return pane;
