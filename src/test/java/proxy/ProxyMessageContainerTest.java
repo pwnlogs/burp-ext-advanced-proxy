@@ -1,12 +1,28 @@
 /**
  * Note: These are not Unit tests. But quick functions written for debugging.
  */
-package burp;
+package proxy;
 
-import Utils.MessageUtils;
+import burp.IHttpRequestResponse;
+import burp.IHttpService;
+import burp.IInterceptedProxyMessage;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 
-class BurpExtenderTest {
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
+class ProxyMessageContainerTest {
+
+    @Mock
+    private IInterceptedProxyMessage message;
+    @Mock
+    private IHttpRequestResponse iHttpRequestResponse;
+    @Mock
+    private IHttpService iHttpService;
 
     byte[] request1 = ("POST /suite/passport/v3/login_type?_r50470=1631191165187&_signature=_02B4Z6wo00f01AJhHqAAAIDCSUVO0X6XJbgCQRoAAGGo09 HTTP/1.1\r\n" +
             "Host: passport.larksuite.com\r\n" +
@@ -19,8 +35,24 @@ class BurpExtenderTest {
             "\r\n" +
             "{\"query_scope\":\"all\",\"app_id\":2,\"pattern\":\"\",\"reg_params\":\"{").getBytes();
 
+    String host1 = "seedbits.dev";
+
+    void mock1() {
+        MockitoAnnotations.initMocks(this);
+        when(this.iHttpService.getHost()).thenReturn(this.host1);
+        when(this.iHttpRequestResponse.getRequest()).thenReturn(this.request1);
+        when(this.iHttpRequestResponse.getHttpService()).thenReturn(this.iHttpService);
+        when(this.message.getMessageInfo()).thenReturn(this.iHttpRequestResponse);
+    }
+
     @Test
-    void getResourcePath() {
-        System.out.println(MessageUtils.getResourcePath(request1));
+    void getPath() {
+        mock1();
+        ProxyMessageContainer pmc = new ProxyMessageContainer(this.message);
+        System.out.println(pmc.getHostname());
+        System.out.println(pmc.getPath());
+        System.out.println(new String(pmc.getRequest()));
+        System.out.println(pmc.getMethod());
+        assert true;
     }
 }
