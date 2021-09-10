@@ -1,6 +1,7 @@
 package proxy;
 
-import Utils.Utils;
+import Utils.MessageUtils;
+import Utils.UIHelper;
 import burp.BurpException;
 import burp.BurpExtender;
 import burp.IInterceptedProxyMessage;
@@ -112,8 +113,9 @@ public class Drop extends ProxyComponent {
     @Override
     public boolean processRequest(ProxyMessageContainer pmc) {
         if (this.enabled &&
-            this.hostPattern.matcher(pmc.getHostname()).matches() &&
             this.methodPattern.matcher(pmc.getMethod()).matches() &&
+            this.hostPattern.matcher(pmc.getHostname()).matches() &&
+            this.portPattern.matcher(pmc.getPort()).matches() &&
             this.pathPattern.matcher(pmc.getPath()).matches()) {
             pmc.message.setInterceptAction(IInterceptedProxyMessage.ACTION_DROP);
             return false;
@@ -139,14 +141,10 @@ public class Drop extends ProxyComponent {
         this.enableLabel = new JLabel("<html>Drop enabled and configs blocked. Disable to configure again " +
                 "<span style=\"color:green\">⬤</span></html>", SwingConstants.RIGHT);
         this.methodField = new JTextField(".*", 8);
-        Font monospaceFont = new Font("monospaced", Font.PLAIN, this.methodField.getFont().getSize());
-        this.methodField.setFont(monospaceFont);
         this.hostnameField = new JTextField("", 36);
-        this.hostnameField.setFont(monospaceFont);
         this.portField = new JTextField(".*", 8);
-        this.portField.setFont(monospaceFont);
         this.pathField = new JTextField(".*");
-        this.pathField.setFont(monospaceFont);
+        UIHelper.setMonospaceFont(methodField, hostnameField, portField, pathField);
         this.enableCheckBox.addItemListener(e -> {
             setEnabled(e.getStateChange() == ItemEvent.SELECTED);
         });
@@ -178,7 +176,7 @@ public class Drop extends ProxyComponent {
         this.pasteUrlButton = new JButton("Parse and paste URL");
         this.pasteUrlButton.addActionListener(actionEvent -> {
             try {
-                Utils.pasteUrlFromClipboard(this.hostnameField, this.pathField);
+                UIHelper.pasteUrlFromClipboard(null, this.hostnameField, this.portField, this.pathField);
             } catch (BurpException e) {
                 JOptionPane.showMessageDialog(null,
                         e.getShowMessage(),

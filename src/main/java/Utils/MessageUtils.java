@@ -10,9 +10,8 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 
-public class Utils {
+public class MessageUtils {
 
     /**
      * Return the resource path from a request.
@@ -52,15 +51,4 @@ public class Utils {
         return ba.toString();
     }
 
-    public static void pasteUrlFromClipboard(JTextComponent hostnameField, JTextComponent pathField) throws BurpException {
-        try {
-            String urlStr = (String) Toolkit.getDefaultToolkit()
-                    .getSystemClipboard().getData(DataFlavor.stringFlavor);
-            URL url = new URL(urlStr);
-            hostnameField.setText(url.getHost());
-            pathField.setText(url.getPath());
-        } catch (UnsupportedFlavorException | IOException e) {
-            throw new BurpException("Failed to read/parse clipboard content. Clipboard data might be invalid.", e);
-        }
-    }
 }

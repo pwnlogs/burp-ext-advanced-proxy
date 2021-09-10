@@ -3,7 +3,7 @@
  */
 package burp;
 
-import Utils.Utils;
+import Utils.MessageUtils;
 import org.junit.jupiter.api.Test;
 
 class BurpExtenderTest {
@@ -21,6 +21,6 @@ class BurpExtenderTest {
 
     @Test
     void getResourcePath() {
-        System.out.println(Utils.getResourcePath(request1));
+        System.out.println(MessageUtils.getResourcePath(request1));
     }
 }

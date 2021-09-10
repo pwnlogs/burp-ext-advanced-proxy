@@ -1,5 +1,6 @@
 package burp;
 
+import proxy.ChangeHost;
 import proxy.Drop;
 import proxy.IProxyComponent;
 import proxy.ProxyMessageContainer;
@@ -16,7 +17,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
     private final String name = "Advanced Proxy";
     private final String tabName = "AdvProxy";
 
-    private List<IProxyComponent> IProxyComponents = new ArrayList<>();
+    private List<IProxyComponent> proxyComponents = new ArrayList<>();
 
     private JPanel tabUi;
     public PrintWriter stdout;
@@ -27,7 +28,8 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
     public BurpExtender() { }
 
     private void initComponents() {
-        this.IProxyComponents.add(new Drop(this));
+        this.proxyComponents.add(new Drop(this));
+        this.proxyComponents.add(new ChangeHost(this));
     }
 
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -47,9 +49,9 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
     public void processProxyMessage(boolean messageIsRequest, IInterceptedProxyMessage message) {
         ProxyMessageContainer pmc = new ProxyMessageContainer(message);
         if (messageIsRequest) {
-            for(int i = 0; i < this.IProxyComponents.size() && this.IProxyComponents.get(i).processRequest(pmc); i++) ;
+            for(int i = 0; i < this.proxyComponents.size() && this.proxyComponents.get(i).processRequest(pmc); i++) ;
         } else {
-            for(int i = 0; i < this.IProxyComponents.size() && this.IProxyComponents.get(i).processResponse(pmc); i++) ;
+            for(int i = 0; i < this.proxyComponents.size() && this.proxyComponents.get(i).processResponse(pmc); i++) ;
         }
     }
 
@@ -79,13 +81,13 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
     private void createLoaders() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        for(IProxyComponent pc: this.IProxyComponents) {
+        for(IProxyComponent pc: this.proxyComponents) {
             JPanel p = pc.getPanel();
             if (p != null) {
                 panel.add(p);
-                panel.add(Box.createVerticalStrut(7));
+                panel.add(Box.createVerticalStrut(10));
                 panel.add(new JSeparator());
-                panel.add(Box.createVerticalStrut(7));
+                panel.add(Box.createVerticalStrut(15));
             }
         }
         this.tabUi.setLayout(new BorderLayout());
