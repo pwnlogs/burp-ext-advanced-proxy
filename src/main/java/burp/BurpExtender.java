@@ -1,9 +1,6 @@
 package burp;
 
-import proxy.ChangeHost;
-import proxy.Drop;
-import proxy.IProxyComponent;
-import proxy.ProxyMessageContainer;
+import proxy.*;
 
 import javax.swing.*;
 import java.awt.*;

@@ -9,6 +9,7 @@ import burp.IInterceptedProxyMessage;
 public class ProxyMessageContainer {
     public final IInterceptedProxyMessage message;
     private byte[] request = null;
+    private byte[] response = null;
     private String method = null;
     private String hostname = null;
     private String port = null;
@@ -21,6 +22,13 @@ public class ProxyMessageContainer {
     public byte[] getRequest() {
         if (this.request == null) {
             this.request = message.getMessageInfo().getRequest();
+        }
+        return this.request;
+    }
+
+    public byte[] getResponse() {
+        if (this.response == null) {
+            this.response = message.getMessageInfo().getResponse();
         }
         return this.request;
     }
