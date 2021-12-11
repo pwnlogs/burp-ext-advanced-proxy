@@ -62,7 +62,7 @@ public class ChangeHost extends ProxyComponent{
             }
         }
         this.setFilterEditable(!enable);
-        this.destinationProtocolDropDown.setEditable(!enable);
+        this.destinationProtocolDropDown.setEnabled(!enable);
         this.destinationHostField.setEditable(!enable);
         this.destinationPortField.setEditable(!enable);
         this.pasteDestUrlButton.setEnabled(!enable);
